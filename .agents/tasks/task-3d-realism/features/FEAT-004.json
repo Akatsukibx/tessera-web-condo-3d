@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-004",
+  "type": "test",
+  "description": "Accessibility text alternatives, copy sync, performance guard and visual pass: rewrite CHAPTERS[].description to describe the new furniture/materials accurately (ledes/specs untouched), add the five amenity one-liners (review finding F3) and the four scene descriptions to PRODUCT.md, add an e2e draw-call budget test via window.__tessera.renderInfo(), regenerate and inspect all chapter screenshots at 1280/1440/1920 (+reduced), and record before/after chunk size, draw calls and triangles in verification.md. Depends on FEAT-002 and FEAT-003.",
+  "status": "completed",
+  "steps": [
+    "Edit only the description fields of CHAPTERS in C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn\\src\\content\\facts.js so each matches what the scene shows (arrival: fluted concrete fins, bronze glass, canopy, garden court with trees and a reflecting pool; lobby: travertine, oak slats, two lift cores, globe pendant, lounge chairs and sofa, olive trees, no desk; living: oak floor, olive linen sofa, marble coffee table, wool rug, walnut dining for six, kitchen island, full-height glazing west; balcony: glass balustrade with bronze rail, loungers, lit city blocks and the river to the west under an amber sky). Plain, factual, no banned words, no '!'.",
+    "Edit C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn\\PRODUCT.md: add section 'Amenity copy (verbatim)' listing the five AMENITIES level/title/copy strings exactly as in facts.js, and section '3D scene descriptions' listing the four new descriptions verbatim.",
+    "Edit C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn\\tests\\e2e\\smoke.spec.js: add test 'draw calls stay within budget' (openReady, for i 0..3 goToChapter(i), waitForTimeout(300), expect(renderInfo().calls).toBeLessThanOrEqual(250)) and assert renderInfo() is null in the existing ?nowebgl test.",
+    "Run `npm.cmd --prefix C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn run shots`, open every chapter PNG (normal and -reduced) in screenshots\\desktop-1280, desktop-1440, desktop-1920; fix any visual defects in the set files (floating/clipped geometry, z-fighting, shadow acne, blown emissives, unreadable river, any purple hue) and re-shoot.",
+    "Append a '3D realism upgrade' section to C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn\\.agents\\tasks\\verification.md: build/unit/e2e results with counts, scene chunk before (555 kB / 140 kB gzip) and after, draw calls and triangles per chapter, screenshots inspected and defects fixed, status of findings F1-F3."
+  ],
+  "acceptance_criteria": [
+    "Chapter ledes/specs in facts.js unchanged and verbatim with PRODUCT.md",
+    "PRODUCT.md contains the five amenity one-liners verbatim",
+    "test:e2e passes including the new draw-call test in all 3 projects; axe zero violations",
+    "verification.md has the new section with measured numbers"
+  ],
+  "verification": [
+    "npm.cmd --prefix C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn run build",
+    "npm.cmd --prefix C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn run test:unit",
+    "npm.cmd --prefix C:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn run test:e2e"
+  ],
+  "blocked_reason": null,
+  "findings": "SIZES: build OK, scene chunk 645.90 kB raw / 170.90 kB gzip (unchanged from FEAT-003; baseline 555/140, budget 680/175). TESTS: unit 8 files / 71 tests pass. e2e 45/45 pass in 8.5 min (42 old + 'draw calls stay within budget' x 3 projects); axe zero violations; ?nowebgl test now asserts renderInfo() === null. The new test logs '[render-info] <project> chN calls=.. triangles=..' to stdout. DRAW CALLS / TRIANGLES (identical at 1280/1440; 1920 ch3 differs slightly): ch1 124 / 307,062; ch2 121 / 293,304; ch3 159 / 226,022 (1920: 160 / 230,438); ch4 83 / 155,334. COPY: only CHAPTERS[].description changed in facts.js; ledes/specs untouched and still verbatim with PRODUCT.md. PRODUCT.md gained 'Amenity copy (verbatim)' (5 AMENITIES level/title/copy, curly apostrophes kept) and '3D scene descriptions (verbatim text alternatives)' (F3 fixed). DEVIATION: descriptions name only what the chapter frames show, so the kitchen island (outside the ch3 frame, see FEAT-003 finding a), the reflecting pool (not legible from the ch1 street camera) and the balcony loungers (behind the ch4 camera) are left out; the step's list mentioned the island and pool. If the island is later moved into frame, add 'and a kitchen island' back to the living description in facts.js and PRODUCT.md. VISUAL PASS: opened all 4 chapters at 1280/1440/1920; the -reduced PNGs are byte-for-byte the same size as the normal ones in every project (snap to same keyframes) and 1440 ch3/ch4 reduced were opened too. No floating/clipped geometry, z-fighting, shadow acne, blown emissives or purple; river reads at ch4 in all projects; panel readable. No set-file fixes needed. Known limits unchanged from FEAT-003 (island out of frame, balustrade glass faint, downlight bezels read as dark rings at the top of ch3). verification.md has the new '3D realism upgrade' section with these numbers and F1-F3 status."
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.log
+
+# ภาพหน้าจอจาก Playwright (~76 MB) สร้างใหม่ได้ด้วย npm run shots
+screenshots/
+tests/screenshots/
+
+.claude/settings.local.json

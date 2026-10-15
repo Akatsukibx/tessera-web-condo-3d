@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tessera Sathorn · Residences in Sathorn, Bangkok</title>
+    <meta
+      name="description"
+      content="Tessera Sathorn: 168 freehold residences across 42 storeys, a short walk to BTS Chong Nonsi. Completion Q4 2028."
+    />
+    <meta name="theme-color" content="#F4F1EA" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-tone="scene">
+      <div class="container header-inner">
+        <a class="brand" href="#top" aria-label="Tessera Sathorn, back to top">
+          <svg viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+            <rect class="tile" x="0" y="0" width="13" height="13" />
+            <rect class="tile-accent" x="15" y="0" width="13" height="13" />
+            <rect class="tile" x="0" y="15" width="13" height="13" />
+            <rect class="tile" x="15" y="15" width="13" height="13" />
+          </svg>
+          <span class="wordmark">TESSERA SATHORN</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <ul>
+            <li><a href="#story">Walkthrough</a></li>
+            <li><a href="#residences">Residences</a></li>
+            <li><a href="#amenities">Amenities</a></li>
+            <li><a href="#location">Location</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn-primary" href="#booking">Book a viewing</a>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- 01 Walkthrough: sticky 3D stage driven by scroll -->
+      <section id="story" class="story" aria-labelledby="story-title">
+        <div class="story-stage">
+          <div class="scene" id="scene">
+            <canvas
+              id="scene-canvas"
+              role="img"
+              aria-label="3D walkthrough of a Tessera Sathorn residence"
+              aria-describedby="story-desc"
+            ></canvas>
+            <div class="lift-overlay" id="lift-overlay" aria-hidden="true"><span>Level 34</span></div>
+          </div>
+          <div class="story-overlay">
+            <div class="scrim-bl" aria-hidden="true"></div>
+            <div class="scrim-b" aria-hidden="true"></div>
+            <div class="scrim-r" aria-hidden="true"></div>
+            <div class="chapters" id="chapters"></div>
+            <nav class="chapter-nav" aria-label="Chapters">
+              <ol id="chapter-buttons"></ol>
+            </nav>
+            <p id="story-desc" class="visually-hidden"></p>
+            <p id="story-live" class="visually-hidden" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 Overview: split statement + ruled key figures -->
+      <section id="overview" class="section overview" aria-labelledby="overview-title">
+        <div class="container grid">
+          <div class="section-head">
+            <p class="index-label">02 / Overview</p>
+            <h2 id="overview-title">In the centre of Sathorn</h2>
+          </div>
+          <div class="overview-copy">
+            <p class="lead">
+              A short walk to BTS Chong Nonsi. 168 residences across 42 storeys, with few homes per floor and generous
+              ceilings.
+            </p>
+            <p>
+              Considered materials and 3.1 m ceilings throughout. A sky lounge and a 35 m infinity pool on level 38.
+              Freehold ownership, with completion in Q4 2028.
+            </p>
+          </div>
+        </div>
+        <div class="container">
+          <dl class="figures" id="figures"></dl>
+        </div>
+      </section>
+
+      <!-- 03 Residences: Tower Explorer (shares the walkthrough's canvas) + floor plan tabs -->
+      <section id="residences" class="residences band" aria-labelledby="residences-title">
+        <div class="explorer" id="explorer" data-panel="closed">
+          <div class="explorer-scene" id="explorer-scene"></div>
+
+          <div class="explorer-intro">
+            <p class="index-label">03 / Residences</p>
+            <h2 id="residences-title">Choose a level</h2>
+            <p class="section-intro">Drag to turn the tower. Choose a level to see its residences, areas and prices.</p>
+            <dl class="mix" id="explorer-mix"></dl>
+            <button type="button" class="btn btn-secondary" id="enter-sample">Enter the sample residence</button>
+            <p class="sample-note">Level 34 · 2 Bedroom · 96 sqm</p>
+          </div>
+
+          <div class="floor-scale">
+            <label for="floor-range" class="visually-hidden">Level</label>
+            <input id="floor-range" type="range" min="1" max="42" step="1" value="24" />
+            <ul class="zone-labels" id="zone-labels" aria-hidden="true"></ul>
+          </div>
+
+          <div class="floor-readout">
+            <p id="floor-readout-text">Level 24 · 5 residences</p>
+            <button type="button" class="btn btn-secondary" id="floor-open" aria-controls="floor-panel" aria-expanded="false">
+              View level 24
+            </button>
+          </div>
+
+          <p id="floor-live" class="visually-hidden" aria-live="polite"></p>
+          <div class="floor-tip" aria-hidden="true" hidden></div>
+
+          <div id="floor-panel" class="floor-panel" role="dialog" aria-modal="false" aria-labelledby="floor-panel-title" hidden>
+            <button type="button" class="panel-close" aria-label="Close level details"></button>
+            <div id="floor-panel-body"></div>
+          </div>
+        </div>
+
+        <div class="container plans-wrap">
+          <div class="plans" id="plans">
+            <div class="plans-head">
+              <h3 id="plans-title">Floor plans</h3>
+              <p>Drawn to one scale · North up · West to the left</p>
+            </div>
+            <div class="tablist" role="tablist" aria-labelledby="plans-title" id="plan-tabs"></div>
+            <div id="plan-panels"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 Amenities: asymmetric editorial list -->
+      <section id="amenities" class="section amenities" aria-labelledby="amenities-title">
+        <div class="container grid">
+          <div class="section-head">
+            <p class="index-label">04 / Amenities</p>
+            <h2 id="amenities-title">Shared floors</h2>
+            <p class="section-intro">Amenities sit on three floors of the tower, for residents only.</p>
+          </div>
+          <ul class="amenity-list" id="amenity-list"></ul>
+        </div>
+      </section>
+
+      <!-- 05 Location: map left, distances right -->
+      <section id="location" class="section band location" aria-labelledby="location-title">
+        <div class="container grid">
+          <figure class="map-figure" id="map-figure"></figure>
+          <div class="location-side">
+            <div class="section-head">
+              <p class="index-label">05 / Location</p>
+              <h2 id="location-title">Sathorn, Bangkok</h2>
+            </div>
+            <p class="section-intro">
+              On Sathorn Road, east of Narathiwat Ratchanakharin Road. BTS Chong Nonsi is about 350 m away, a 5 minute
+              walk.
+            </p>
+            <dl class="distances" id="distances"></dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 Booking -->
+      <section id="booking" class="section booking" aria-labelledby="booking-title">
+        <div class="container grid">
+          <div class="section-head">
+            <p class="index-label">06 / Viewing</p>
+            <h2 id="booking-title">Book a private viewing</h2>
+            <p class="section-intro">
+              Tell us which residence type interests you and when you would like to visit.
+            </p>
+          </div>
+          <div class="booking-body">
+            <form id="booking-form" class="booking-form" novalidate aria-labelledby="booking-title">
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="f-name">Full name</label>
+                  <input id="f-name" name="name" type="text" autocomplete="name" aria-describedby="err-name" />
+                  <p id="err-name" class="field-error"></p>
+                </div>
+                <div class="field">
+                  <label for="f-email">Email</label>
+                  <input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="err-email" />
+                  <p id="err-email" class="field-error"></p>
+                </div>
+                <div class="field">
+                  <label for="f-phone">Phone</label>
+                  <input
+                    id="f-phone"
+                    name="phone"
+                    type="tel"
+                    autocomplete="tel"
+                    aria-describedby="hint-phone err-phone"
+                  />
+                  <p id="hint-phone" class="hint">Include the country code, for example +66.</p>
+                  <p id="err-phone" class="field-error"></p>
+                </div>
+                <div class="field">
+                  <label for="f-unit">Preferred residence</label>
+                  <select id="f-unit" name="unit" aria-describedby="err-unit">
+                    <option value="">Choose a type</option>
+                  </select>
+                  <p id="err-unit" class="field-error"></p>
+                </div>
+                <div class="field">
+                  <label for="f-date">Preferred date</label>
+                  <input id="f-date" name="date" type="date" aria-describedby="hint-date err-date" />
+                  <p id="hint-date" class="hint">From tomorrow, up to 180 days ahead.</p>
+                  <p id="err-date" class="field-error"></p>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Request a viewing</button>
+                <p class="form-note">Demonstration only. No data leaves this page.</p>
+              </div>
+            </form>
+            <div id="booking-success" class="booking-success" role="status" hidden>
+              <h3 id="success-heading" tabindex="-1"></h3>
+              <p>Your request stays in this browser tab. Nothing was stored or transmitted.</p>
+              <button type="button" class="btn btn-secondary" id="booking-reset">Book another viewing</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer on-dark">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <svg viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+            <rect x="0" y="0" width="13" height="13" fill="#F4F1EA" />
+            <rect x="15" y="0" width="13" height="13" fill="#A9B77A" />
+            <rect x="0" y="15" width="13" height="13" fill="#F4F1EA" />
+            <rect x="15" y="15" width="13" height="13" fill="#F4F1EA" />
+          </svg>
+          <span class="wordmark">TESSERA SATHORN</span>
+        </div>
+        <div class="footer-meta">
+          <p class="footer-note">Concept demonstration. Tessera Sathorn is a fictional project.</p>
+          <p>Design: design studio</p>
+        </div>
+        <div class="footer-base">
+          <span>Sathorn, Bangkok · Freehold · Completion Q4 2028</span>
+          <a href="#top">Back to top</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

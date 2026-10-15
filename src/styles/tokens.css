@@ -1,0 +1,69 @@
+:root {
+  /* Colour. Ratios measured against --paper unless noted. */
+  --paper: #f4f1ea;
+  --paper-2: #eae6dc;
+  --ink: #1a1a17; /* 16:1 */
+  --ink-2: #4a4a43; /* 8:1 */
+  --olive: #4f5a2a; /* 6.6:1, the single accent */
+  --olive-ink: #3b4420; /* hover / pressed */
+  --rule: #cfc9bc; /* hairlines, non-text only */
+  --error: #9e2a1f; /* 6.6:1 */
+  /* On dark (ink) bands */
+  --on-dark: #f4f1ea;
+  --on-dark-2: #b9b4a7; /* 8.6:1 on ink */
+  --olive-light: #a9b77a; /* 8.4:1 on ink */
+
+  /* Type */
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --fs-xs: 13px;
+  --fs-sm: 14px;
+  --fs-base: 17px;
+  --fs-md: 21px;
+  --fs-lg: 27px;
+  --fs-xl: 34px;
+  --fs-2xl: 43px;
+  --fs-3xl: clamp(54px, calc(54px + (100vw - 1800px) * 0.0675), 62px);
+  --fs-display: clamp(68px, calc(68px + (100vw - 1800px) * 0.085), 78px);
+
+  /* Spacing, 4px base */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+  --s-11: 192px;
+
+  /* Layout */
+  --content-max: 1280px;
+  --gutter: 24px;
+  --margin: 80px;
+  --header-h: 72px;
+  --radius: 2px;
+  --target: 44px;
+  /* Shared horizontal anchor for full-bleed stages, aligned with the header logo:
+     80 px at 1440, 64 px at 1280, 320 px at 1920. Resolves against the stage width. */
+  --edge: max(var(--margin), calc((100% - var(--content-max)) / 2));
+  --spec-h: 64px;
+}
+
+@media (max-width: 1360px) {
+  :root {
+    --margin: 64px;
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --margin: 24px;
+    --header-h: 64px;
+    --fs-2xl: 34px;
+    --fs-3xl: 40px;
+    --fs-display: 44px;
+  }
+}

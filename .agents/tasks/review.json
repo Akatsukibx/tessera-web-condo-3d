@@ -1,0 +1,9 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    "Chapter index label fails WCAG AA (blocking): .chapter .index-label in src/styles/sections.css is olive-light #A9B77A at 13px. Measured background luminance in screenshots/desktop-{1280,1440,1920}/chapter-01-arrival.png is L 0.072-0.098, which gives about 3.3-3.7:1 (needs 4.5:1). In chapter-04-balcony.png the '04 / 04' label crosses lit windows (bg L up to 0.15-0.25, about 2-3.7:1). Fix: render the index label in var(--on-dark), or raise the scrim alpha at the label's height so the background is L <= 0.04, then re-sample all 4 chapters x 3 viewports.",
+    "Rail scrim reads as a dark halo: .scrim-r (radial 400x300, 0.84 -> 0.76 at 55% -> 0) leaves a visible circular smudge in the ch1 sky and on the ch3 white wall at all viewports (chapter-01-arrival.png, chapter-03-living-room.png). Replace it with a soft vertical band behind the rail (linear 270deg gradient, or a radial with monotonic falloff and no plateau) that keeps the rail labels at >= 4.5:1 (they currently measure >= 5.7:1).",
+    "Floor-plan labels collide in the explorer panel: in section-explorer-panel.png (1280/1440/1920), the 1 Bedroom 'Bath 5.3 sqm' and 'Entry 8 sqm' labels overprint each other and extend past the plan outline. Fix small-room label placement in src/ui/floorplans.js (stack, abbreviate, or use a leader line), since the plan is now a primary element of the panel."
+  ],
+  "reviewDoc": "c:\\Users\\dusitm\\Desktop\\Test-Kiro\\tessera-sathorn\\.agents\\tasks/review.md"
+}

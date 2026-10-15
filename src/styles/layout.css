@@ -1,0 +1,261 @@
+/* Container and 12-column grid */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--margin));
+  margin: 0 auto;
+  padding: 0 var(--margin);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+.section {
+  padding: var(--s-10) 0;
+}
+
+.band {
+  background: var(--paper-2);
+}
+
+/* Section head: mono index label + sans heading */
+.section-head .index-label {
+  margin-bottom: var(--s-4);
+}
+
+.section-head h2 {
+  font-size: var(--fs-3xl);
+}
+
+.section-intro {
+  color: var(--ink-2);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  max-width: 34em;
+}
+
+section[id] {
+  scroll-margin-top: var(--header-h);
+}
+
+/* Header: fixed, two tones. "scene" floats over the walkthrough, "paper" everywhere else. */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--header-h);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-header .tile {
+  fill: var(--ink);
+}
+
+.site-header .tile-accent {
+  fill: var(--olive);
+}
+
+.site-header[data-tone='scene'] {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Neutral ink scrim behind the header text, fading into the scene. */
+.site-header[data-tone='scene']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 136px;
+  background: linear-gradient(180deg, rgba(20, 20, 18, 0.8) 0%, rgba(20, 20, 18, 0.55) 50%, rgba(20, 20, 18, 0) 100%);
+  pointer-events: none;
+}
+
+.site-header[data-tone='scene'] .brand,
+.site-header[data-tone='scene'] .brand:hover,
+.site-header[data-tone='scene'] .primary-nav a {
+  color: var(--on-dark);
+}
+
+.site-header[data-tone='scene'] .primary-nav a:hover,
+.site-header[data-tone='scene'] .primary-nav a[aria-current='true'] {
+  color: var(--on-dark);
+  border-bottom-color: var(--olive-light);
+}
+
+.site-header[data-tone='scene'] .tile {
+  fill: var(--on-dark);
+}
+
+.site-header[data-tone='scene'] .tile-accent {
+  fill: var(--olive-light);
+}
+
+.site-header[data-tone='scene'] :focus-visible {
+  outline-color: var(--olive-light);
+}
+
+.header-inner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: var(--target);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--ink);
+}
+
+.brand svg {
+  width: 28px;
+  height: 28px;
+}
+
+.wordmark {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.primary-nav {
+  margin-left: auto;
+}
+
+.primary-nav ul {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.primary-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  min-width: var(--target);
+  padding: 0 var(--s-3);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.primary-nav a:hover {
+  color: var(--olive);
+}
+
+.primary-nav a[aria-current='true'] {
+  color: var(--olive);
+  border-bottom-color: var(--olive);
+}
+
+/* Footer */
+.site-footer {
+  background: var(--ink);
+  color: var(--on-dark);
+  padding: var(--s-9) 0 var(--s-7);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--s-7);
+  align-items: end;
+}
+
+.footer-brand {
+  grid-column: 1 / span 5;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.footer-brand svg {
+  width: 32px;
+  height: 32px;
+}
+
+.footer-meta {
+  grid-column: 7 / span 6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  color: var(--on-dark-2);
+  font-size: var(--fs-sm);
+}
+
+.footer-note {
+  color: var(--on-dark);
+}
+
+.footer-base {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--s-5);
+  border-top: 1px solid #3a3a35;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-dark-2);
+}
+
+.footer-base a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  min-width: var(--target);
+  color: var(--olive-light);
+}
+
+.footer-base a:hover {
+  color: var(--on-dark);
+}
+
+/* Single-column fallback */
+@media (max-width: 900px) {
+  .grid,
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .grid > *,
+  .footer-grid > * {
+    grid-column: 1 / -1 !important;
+  }
+
+  .section {
+    padding: var(--s-9) 0;
+  }
+
+  .primary-nav {
+    display: none;
+  }
+
+  .header-inner .btn {
+    margin-left: auto;
+  }
+
+  .footer-base {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
+}

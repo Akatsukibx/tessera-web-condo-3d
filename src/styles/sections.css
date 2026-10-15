@@ -1,0 +1,1310 @@
+/* ---------- Story: cinematic full-bleed walkthrough ---------- */
+.story {
+  position: relative;
+  height: 400vh;
+  background: var(--ink);
+}
+
+/* The stage sticks at the very top; the fixed header floats over it. */
+.story-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  background: #2b3138;
+}
+
+#scene-canvas,
+.scene-fallback,
+.scene-fallback svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#scene-canvas {
+  position: relative;
+}
+
+/* Still frame left behind when the canvas moves to the other host. */
+.scene-poster {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scene-fallback {
+  background: var(--paper-2);
+}
+
+.lift-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lift-overlay span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+}
+
+.story-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  color: var(--on-dark);
+}
+
+/* Neutral ink scrims only: bottom-left behind the title, bottom behind the specs, right behind the rail. */
+.scrim-bl,
+.scrim-b,
+.scrim-r {
+  position: absolute;
+  pointer-events: none;
+}
+
+.scrim-bl {
+  left: 0;
+  bottom: 0;
+  width: max(min(1180px, 80%), calc(var(--edge) + 900px));
+  height: 82%;
+  background: radial-gradient(
+    130% 100% at 0% 100%,
+    rgba(20, 20, 18, 0.88) 0%,
+    rgba(20, 20, 18, 0.8) 40%,
+    rgba(20, 20, 18, 0.42) 60%,
+    rgba(20, 20, 18, 0) 78%
+  );
+}
+
+.scrim-b {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 200px;
+  background: linear-gradient(0deg, rgba(20, 20, 18, 0.74), rgba(20, 20, 18, 0));
+}
+
+.scrim-r {
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--edge) + 520px);
+  /* Soft vertical band behind the rail: long smoothstep ramps (left to right, and a full-height mask
+     from the top and bottom edges) so bright interiors (ch3 wall, island) stay dark behind the labels
+     without a visible edge or blob. The rail starts at least 344 px into this element. */
+  background: linear-gradient(
+    90deg,
+    rgba(20, 20, 18, 0) 0,
+    rgba(20, 20, 18, 0.025) 34px,
+    rgba(20, 20, 18, 0.13) 85px,
+    rgba(20, 20, 18, 0.41) 170px,
+    rgba(20, 20, 18, 0.69) 255px,
+    rgba(20, 20, 18, 0.8) 306px,
+    rgba(20, 20, 18, 0.82) 340px,
+    rgba(20, 20, 18, 0.82) 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    rgba(0, 0, 0, 0.03) calc((50% - 122px) * 0.1),
+    rgba(0, 0, 0, 0.16) calc((50% - 122px) * 0.25),
+    rgba(0, 0, 0, 0.5) calc((50% - 122px) * 0.5),
+    rgba(0, 0, 0, 0.84) calc((50% - 122px) * 0.75),
+    rgba(0, 0, 0, 0.97) calc((50% - 122px) * 0.9),
+    #000 calc(50% - 122px),
+    #000 calc(50% + 122px),
+    rgba(0, 0, 0, 0.97) calc(100% - (50% - 122px) * 0.9),
+    rgba(0, 0, 0, 0.84) calc(100% - (50% - 122px) * 0.75),
+    rgba(0, 0, 0, 0.5) calc(100% - (50% - 122px) * 0.5),
+    rgba(0, 0, 0, 0.16) calc(100% - (50% - 122px) * 0.25),
+    rgba(0, 0, 0, 0.03) calc(100% - (50% - 122px) * 0.1),
+    transparent 100%
+  );
+}
+
+.chapters,
+.chapter {
+  position: absolute;
+  inset: 0;
+}
+
+.chapter[hidden] {
+  display: none;
+}
+
+.chapter-head,
+.specs {
+  pointer-events: auto;
+  text-shadow: 0 1px 2px rgba(20, 20, 18, 0.35);
+}
+
+.chapter-head {
+  position: absolute;
+  left: var(--edge);
+  bottom: calc(var(--s-6) + var(--spec-h) + var(--s-6));
+  max-width: 640px;
+}
+
+/* Paper, not olive-light: the label sits high in the scrim falloff and over lit windows in ch4. */
+.chapter .index-label {
+  color: var(--on-dark);
+  text-shadow:
+    0 0 4px rgba(20, 20, 18, 0.7),
+    0 1px 2px rgba(20, 20, 18, 0.5);
+}
+
+.chapter-title {
+  margin-top: var(--s-3);
+  max-width: 9ch;
+  font-size: clamp(56px, 5.4vw, 104px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--on-dark);
+}
+
+.chapter-intro .chapter-title {
+  max-width: 8ch;
+}
+
+.chapter-lede {
+  margin-top: var(--s-4);
+  max-width: 30em;
+  font-size: var(--fs-md);
+  line-height: 1.45;
+  text-wrap: balance;
+  color: var(--on-dark);
+}
+
+/* Specs: one Mono label/value row along the bottom with hairline separators. */
+.specs {
+  position: absolute;
+  left: var(--edge);
+  right: calc(var(--edge) + 200px);
+  bottom: var(--s-6);
+  min-height: var(--spec-h);
+  display: flex;
+  flex-wrap: nowrap;
+  border-top: 1px solid rgba(244, 241, 234, 0.28);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.specs > div {
+  padding: var(--s-3) var(--s-6) 0 0;
+}
+
+.specs > div + div {
+  padding-left: var(--s-6);
+  border-left: 1px solid rgba(244, 241, 234, 0.28);
+}
+
+.specs dt {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-dark-2);
+}
+
+.specs dd {
+  margin-top: var(--s-1);
+  max-width: 24em;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--on-dark);
+}
+
+/* Chapter rail: slim, vertical, right edge. */
+.chapter-nav {
+  position: absolute;
+  right: var(--edge);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 176px;
+  pointer-events: auto;
+}
+
+.chapter-nav ol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter-nav ol::after,
+.chapter-nav ol::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.chapter-nav ol::after {
+  bottom: 0;
+  width: 1px;
+  background: rgba(244, 241, 234, 0.28);
+}
+
+.chapter-nav ol::before {
+  z-index: 1;
+  width: 2px;
+  height: calc(var(--story-progress, 0) * 100%);
+  background: var(--olive-light);
+}
+
+.chapter-nav button {
+  position: relative;
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0 var(--s-5) 0 0;
+  background: transparent;
+  border: 0;
+  text-align: right;
+  font-size: var(--fs-sm);
+  color: var(--on-dark-2);
+  text-shadow: 0 1px 2px rgba(20, 20, 18, 0.35);
+}
+
+.chapter-nav button .num {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+}
+
+.chapter-nav button:hover {
+  color: var(--on-dark);
+}
+
+.chapter-nav button[aria-current='step'] {
+  color: var(--on-dark);
+}
+
+.chapter-nav button[aria-current='step'] .num {
+  color: var(--olive-light);
+}
+
+.chapter-nav button[aria-current='step']::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: calc(50% - 12px);
+  width: 4px;
+  height: 24px;
+  background: var(--olive-light);
+}
+
+.chapter-nav button:focus-visible {
+  outline: 2px solid var(--olive-light);
+  outline-offset: 3px;
+}
+
+/* ---------- Overview ---------- */
+.overview-copy {
+  grid-column: 6 / span 7;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding-top: var(--s-7);
+}
+
+.overview .section-head {
+  grid-column: 1 / span 5;
+}
+
+.overview-copy .lead {
+  font-size: var(--fs-lg);
+  line-height: 1.35;
+}
+
+.overview-copy p:not(.lead) {
+  color: var(--ink-2);
+  max-width: 36em;
+}
+
+.figures {
+  margin-top: var(--s-9);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+
+.figures > div {
+  padding: var(--s-6) var(--s-5) var(--s-6) 0;
+}
+
+.figures > div + div {
+  padding-left: var(--s-5);
+  border-left: 1px solid var(--rule);
+}
+
+.figures dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.figures dd {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xl);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+/* ---------- Residences: Tower Explorer ---------- */
+.residences {
+  padding-bottom: var(--s-10);
+}
+
+/* Full-viewport stage below the fixed header. */
+.explorer {
+  position: relative;
+  height: calc(100vh - var(--header-h));
+  min-height: 640px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+
+.explorer-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.explorer-scene #scene-canvas {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.explorer.is-dragging #scene-canvas {
+  cursor: grabbing;
+}
+
+.explorer-scene .tower-elevation {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Without WebGL, the drawing re-centres in the space left of the open panel. */
+.explorer[data-panel='open'] .explorer-scene .tower-elevation {
+  width: calc(100% - clamp(400px, 32vw, 480px));
+}
+
+.tower-elevation .band {
+  fill: var(--paper);
+  stroke: #b9b4a7;
+  stroke-width: 1;
+  cursor: pointer;
+}
+
+.tower-elevation .band-amenity,
+.tower-elevation .band-wellness,
+.tower-elevation .band-library,
+.tower-elevation .band-lobby,
+.tower-elevation .band-podium {
+  fill: #dcd7cb;
+}
+
+.tower-elevation .band.is-hover {
+  fill: #cdd4ae;
+}
+
+.tower-elevation .band.is-selected {
+  fill: var(--olive-light);
+}
+
+.tower-elevation .fins {
+  fill: none;
+  stroke: #cfc9bc;
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.tower-elevation .ground {
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.explorer-intro {
+  position: absolute;
+  z-index: 2;
+  left: var(--edge);
+  top: var(--s-7);
+  width: 320px;
+}
+
+.explorer-intro h2 {
+  font-size: var(--fs-2xl);
+  font-weight: 400;
+}
+
+.explorer-intro .index-label {
+  margin-bottom: var(--s-4);
+}
+
+.explorer-intro .section-intro {
+  margin-top: var(--s-4);
+  font-size: var(--fs-base);
+}
+
+.mix {
+  margin-top: var(--s-6);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--ink);
+}
+
+.mix > div {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.mix dt {
+  color: var(--ink-2);
+}
+
+.mix .mix-total dt,
+.mix .mix-total dd {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.explorer-intro .btn {
+  margin-top: var(--s-6);
+}
+
+.sample-note {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+
+/* Level scale beside the tower, following its projected position. */
+.floor-scale {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--tower-x, 50%) + 130px);
+  top: var(--tower-top, 12%);
+  height: calc(var(--tower-bottom, 88%) - var(--tower-top, 12%));
+  width: 200px;
+}
+
+#floor-range {
+  display: block;
+  margin: 0;
+  width: 44px;
+  height: 100%;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  accent-color: var(--olive);
+  cursor: pointer;
+  /* ซ่อนแถบจากสายตาและเมาส์ (เลือกชั้นด้วยการคลิกที่ตึกแทน) แต่ยังใช้คีย์บอร์ดได้: โผล่เมื่อ Tab มาโฟกัส */
+  opacity: 0;
+  pointer-events: none;
+}
+
+#floor-range:focus-visible {
+  opacity: 1;
+}
+
+.zone-labels {
+  position: absolute;
+  left: 52px;
+  top: 10px;
+  bottom: 10px;
+  right: 0;
+}
+
+.zone-labels li {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--p) * 100%);
+  transform: translateY(50%);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-shadow: 0 0 3px var(--paper), 0 0 6px var(--paper);
+}
+
+.zone-labels li::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 1px;
+  margin-right: var(--s-2);
+  vertical-align: middle;
+  background: var(--ink-2);
+}
+
+/* Bottom-left, under the intro column, clear of the model and its plinth. */
+.floor-readout {
+  position: absolute;
+  z-index: 2;
+  left: var(--edge);
+  bottom: var(--s-7);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  white-space: nowrap;
+}
+
+.floor-readout p {
+  max-width: 300px;
+  white-space: normal;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.floor-tip {
+  position: absolute;
+  z-index: 3;
+  transform: translate(16px, -50%);
+  padding: var(--s-2) var(--s-3);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+.floor-tip[hidden] {
+  display: none;
+}
+
+/* One edge-anchored panel on paper. No inner cards. */
+.floor-panel {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: clamp(400px, 32vw, 480px);
+  padding: var(--s-6) var(--s-7);
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  overflow-y: auto;
+}
+
+.floor-panel[hidden] {
+  display: none;
+}
+
+.panel-close {
+  position: absolute;
+  top: var(--s-4);
+  right: var(--s-4);
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+
+.panel-close:hover {
+  background: var(--paper-2);
+}
+
+.floor-panel h3 {
+  margin-top: var(--s-3);
+  padding-right: var(--s-7);
+  font-size: var(--fs-xl);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+/* The title only receives focus programmatically when the panel opens; no ring needed. */
+#floor-panel-title:focus {
+  outline: none;
+}
+
+.panel-summary {
+  margin-top: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--olive);
+}
+
+.floor-units {
+  margin-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.floor-units > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--s-4);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.floor-units dt {
+  font-weight: 500;
+}
+
+.floor-units .n {
+  grid-column: 2;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.floor-units dd:first-of-type {
+  grid-row: 1;
+}
+
+.floor-units .status {
+  color: var(--ink-2);
+}
+
+.plan-switch {
+  margin-top: var(--s-5);
+  display: flex;
+  gap: var(--s-1);
+  border-bottom: 1px solid var(--ink);
+}
+
+.plan-switch button {
+  min-height: 44px;
+  min-width: var(--target);
+  padding: 0 var(--s-3);
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.plan-switch button:hover {
+  color: var(--ink);
+}
+
+.plan-switch button[aria-pressed='true'] {
+  color: var(--ink);
+  border-bottom-color: var(--olive);
+}
+
+.panel-plan {
+  margin-top: var(--s-4);
+}
+
+.panel-plan svg {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+}
+
+.panel-copy {
+  margin-top: var(--s-4);
+  font-size: var(--fs-md);
+  line-height: 1.45;
+}
+
+.panel-note {
+  margin-top: var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.panel-actions {
+  margin-top: var(--s-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+/* At 1280 the intro gives way to the open panel so nothing overlaps. */
+@media (max-width: 1360px) {
+  .explorer-intro {
+    width: 290px;
+  }
+
+}
+
+/* With the panel open the tower re-centres to the left, so the intro and readout make way
+   (the panel repeats the level, and closing it restores both). */
+@media (min-width: 901px) {
+  .explorer[data-panel='open'] .explorer-intro,
+  .explorer[data-panel='open'] .floor-readout {
+    display: none;
+  }
+}
+
+/* Floor plans under the explorer */
+.plans-wrap {
+  padding-top: var(--s-9);
+}
+
+.plans-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-5);
+}
+
+.plans-head h3 {
+  font-size: var(--fs-xl);
+}
+
+.plans-head p {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.tablist {
+  margin-top: var(--s-5);
+  display: flex;
+  gap: var(--s-1);
+  border-bottom: 1px solid var(--ink);
+}
+
+.tablist [role='tab'] {
+  min-height: 48px;
+  min-width: var(--target);
+  padding: 0 var(--s-5);
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.tablist [role='tab']:hover {
+  color: var(--ink);
+}
+
+.tablist [role='tab'][aria-selected='true'] {
+  color: var(--ink);
+  border-bottom-color: var(--olive);
+}
+
+.plan-panel {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  padding-top: var(--s-7);
+}
+
+.plan-panel[hidden] {
+  display: none;
+}
+
+.plan-figure {
+  grid-column: 1 / span 8;
+  background: var(--paper);
+  padding: var(--s-6);
+  border-radius: var(--radius);
+}
+
+.plan-figure svg {
+  width: 100%;
+  height: auto;
+}
+
+.plan-schedule {
+  grid-column: 9 / span 4;
+}
+
+.plan-schedule h4 {
+  font-size: var(--fs-lg);
+  font-weight: 500;
+}
+
+.plan-meta {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.rooms {
+  margin-top: var(--s-5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--ink);
+}
+
+.rooms > div {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rooms dt {
+  color: var(--ink-2);
+}
+
+.rooms .level {
+  padding-top: var(--s-4);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ---------- Amenities ---------- */
+.amenities .section-head {
+  grid-column: 1 / span 4;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--header-h) + var(--s-7));
+}
+
+.amenities .section-intro {
+  margin-top: var(--s-5);
+  font-size: var(--fs-base);
+}
+
+.amenity-list {
+  grid-column: 6 / span 7;
+  border-top: 1px solid var(--ink);
+}
+
+.amenity-list li {
+  display: grid;
+  grid-template-columns: 24px 8.5em 1fr;
+  column-gap: var(--s-5);
+  padding: var(--s-6) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.amenity-list svg {
+  width: 24px;
+  height: 24px;
+  color: var(--olive);
+  margin-top: 4px;
+}
+
+.amenity-level {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  padding-top: 7px;
+}
+
+.amenity-list h3 {
+  font-size: var(--fs-md);
+  line-height: 1.3;
+}
+
+.amenity-list p {
+  margin-top: var(--s-1);
+  color: var(--ink-2);
+}
+
+/* ---------- Location ---------- */
+.location .grid {
+  align-items: start;
+}
+
+.map-figure {
+  grid-column: 1 / span 8;
+  background: var(--paper-2);
+  border-radius: var(--radius);
+}
+
+.map-figure svg {
+  width: 100%;
+  height: auto;
+}
+
+.location-side {
+  grid-column: 9 / span 4;
+}
+
+.location-side .section-intro {
+  margin-top: var(--s-5);
+  font-size: var(--fs-base);
+}
+
+.distances {
+  margin-top: var(--s-7);
+  border-top: 1px solid var(--ink);
+}
+
+.distances > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--s-4);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.distances dt {
+  font-weight: 500;
+}
+
+.distances dt span {
+  display: block;
+  font-weight: 400;
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.distances dd {
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Booking ---------- */
+.booking .section-head {
+  grid-column: 1 / span 5;
+}
+
+.booking .section-intro {
+  margin-top: var(--s-5);
+  font-size: var(--fs-base);
+}
+
+.booking-body {
+  grid-column: 7 / span 6;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-5) var(--gutter);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.field .hint {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.field input,
+.field select {
+  height: 48px;
+  width: 100%;
+  padding: 0 var(--s-4);
+  background: #fffdf8;
+  border: 1px solid var(--ink-2);
+  border-radius: var(--radius);
+  font-size: var(--fs-base);
+}
+
+.field input:hover,
+.field select:hover {
+  border-color: var(--ink);
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline-offset: 1px;
+  border-color: var(--olive);
+}
+
+.field [aria-invalid='true'] {
+  border-color: var(--error);
+  border-width: 2px;
+}
+
+.field-error {
+  font-size: var(--fs-sm);
+  color: var(--error);
+  font-weight: 500;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+.form-actions {
+  margin-top: var(--s-7);
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+}
+
+.form-note {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+
+.booking-success {
+  border-top: 2px solid var(--olive);
+  padding-top: var(--s-6);
+}
+
+.booking-success h3 {
+  font-size: var(--fs-xl);
+  line-height: 1.25;
+}
+
+.booking-success p {
+  margin-top: var(--s-4);
+  color: var(--ink-2);
+}
+
+.booking-success .btn {
+  margin-top: var(--s-6);
+}
+
+/* ---------- Single-column fallback ---------- */
+@media (max-width: 900px) {
+  .story {
+    height: auto;
+  }
+
+  .story-stage {
+    position: relative;
+    top: 0;
+    height: auto;
+    overflow: visible;
+  }
+
+  .scene {
+    position: relative;
+    height: 60vh;
+  }
+
+  .scrim-bl,
+  .scrim-b,
+  .scrim-r,
+  .lift-overlay {
+    display: none;
+  }
+
+  .story-overlay,
+  .chapters,
+  .chapter,
+  .chapter-head,
+  .specs,
+  .chapter-nav {
+    position: static;
+    transform: none;
+  }
+
+  .story-overlay {
+    padding: var(--s-6) var(--margin) var(--s-7);
+  }
+
+  .chapter-title {
+    font-size: var(--fs-display);
+  }
+
+  .specs {
+    margin-top: var(--s-5);
+    flex-wrap: wrap;
+  }
+
+  .specs > div,
+  .specs > div + div {
+    padding: var(--s-3) var(--s-5) var(--s-3) 0;
+    border-left: 0;
+  }
+
+  .chapter-nav {
+    width: auto;
+    margin-top: var(--s-6);
+  }
+
+  .chapter-nav ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chapter-nav ol::before,
+  .chapter-nav ol::after,
+  .chapter-nav button[aria-current='step']::after {
+    display: none;
+  }
+
+  .chapter-nav button {
+    justify-content: flex-start;
+    border-top: 2px solid rgba(244, 241, 234, 0.28);
+  }
+
+  .chapter-nav button[aria-current='step'] {
+    border-top-color: var(--olive-light);
+  }
+
+  .overview-copy {
+    padding-top: var(--s-5);
+  }
+
+  .figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .figures > div:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .explorer {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .explorer-scene {
+    position: relative;
+    order: 1;
+    height: 70vh;
+  }
+
+  .explorer-intro,
+  .floor-scale,
+  .floor-readout,
+  .floor-panel {
+    position: static;
+    transform: none;
+    width: auto;
+    height: auto;
+    margin: 0 var(--margin);
+  }
+
+  .explorer-intro {
+    order: 0;
+    padding-top: var(--s-7);
+  }
+
+  .floor-readout {
+    order: 2;
+    margin-top: var(--s-5);
+    flex-wrap: wrap;
+  }
+
+  .floor-scale {
+    order: 3;
+    margin-top: var(--s-5);
+  }
+
+  #floor-range {
+    writing-mode: horizontal-tb;
+    direction: ltr;
+    width: 100%;
+    height: 44px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .zone-labels {
+    display: none;
+  }
+
+  .floor-panel {
+    order: 4;
+    margin: var(--s-5) 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .plan-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .plan-panel > * {
+    grid-column: 1 / -1 !important;
+  }
+
+  .tablist {
+    overflow-x: auto;
+  }
+
+  .plan-schedule {
+    margin-top: var(--s-6);
+  }
+
+  .amenities .section-head {
+    position: static;
+    margin-bottom: var(--s-7);
+  }
+
+  .amenity-list li {
+    grid-template-columns: 24px 1fr;
+  }
+
+  .amenity-level {
+    grid-column: 2;
+    padding-top: 0;
+  }
+
+  .amenity-list li > div {
+    grid-column: 2;
+  }
+
+  .location-side {
+    margin-top: var(--s-7);
+  }
+
+  .booking-body {
+    margin-top: var(--s-7);
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

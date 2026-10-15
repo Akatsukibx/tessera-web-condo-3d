@@ -1,0 +1,7 @@
+{
+  "task_id": "task-3d-realism",
+  "task_description": "Upgrade the procedural Three.js scene of the Tessera Sathorn condo site to a realistic, physically based look (PMREM env lighting, soft shadows, procedural DataTexture materials, bevelled architecture, tasteful procedural furniture) across all 4 chapters, fix the stray living-room plane and the hidden river, sync PRODUCT.md, keep every existing test, a11y and fallback behaviour green.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}
